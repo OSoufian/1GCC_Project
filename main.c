@@ -2,103 +2,87 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <windows.h>
+#include <stdbool.h>
 
 #include "board.h"
 
-void aaa();
-void COLOR_PRINT(const char* s, int color);
-char read_character();
+char get_action();
+void show_actions();
+bool do_action(char action);
 
 int main()
 {
+    char action;
+
     Board board = create_board();
-    show_board(board);
-    aaa();
-    
+
+    do {
+        show_board(board);
+        show_actions();
+        action = get_action();
+        system("cls");
+    } while (!do_action(action));
+
     return 0;
 }
 
-void aaa()
+char get_action()
 {
-    char choice;
-    int exit = 0;
+    char action;
 
-    int red = 4;
-    int green = 2;
-    int blue = 1;
-    int pink = 5;
-    int yellow = 6;
-
-    COLOR_PRINT("ROUGE\n", red);
-    COLOR_PRINT("VERT\n", green);
-    COLOR_PRINT("BLEU\n", blue);
-    COLOR_PRINT("ROSE\n", pink);
-    COLOR_PRINT("JAUNE\n", yellow);
-
-
-    while (exit == 0) {
-
-        printf("\nSelect a direction (N, S, E, W).");
-        printf("\nCancel the previous move (B).");
-        printf("\nErase the chain (R).");
-        printf("\nRestart the level (X).");
-        printf("\nSelect another chain (C)");
-        printf("\nExit the game (Q)\n\n");
-
-        choice = read_character();
-
-        switch (choice) {
-        case 'N':
-            printf("\nVous avez pris la direction du Nord\n");
-            break;
-        case 'E':
-            printf("\nVous avez pris la direction de l'Est\n");
-            break;
-        case 'W':
-            printf("\nVous avez pris la direction de l'Ouest\n");
-            break;
-        case 'S':
-            printf("\nVous avez pris la direction du Sud\n");
-            break;
-        case 'B':
-            printf("\nVous avez annule votre precedent mouvement\n");
-            break;
-        case 'R':
-            printf("\nVous avez efface la chaine\n");
-            break;
-        case 'X':
-            printf("\nVous avez recommence le niveau\n");
-            break;
-        case 'C':
-            printf("\nVous avez selectionne une autre chaîne\n");
-            break;
-        case 'Q':
-            printf("\nVous avez quitte la partie\n");
-            exit = 1;
-            break;
-        default:
-            printf("\nVous n'avez pas choisi de lettre valide\n");
-            break;
-        }
-    }
-}
-
-char read_character()
-{
-    char character;
-
-    character = getchar();
-    character = toupper(character);
+    action = getchar();
+    action = toupper(action);
 
     while (getchar() != '\n');
 
-    return character;
+    return action;
 }
 
-void COLOR_PRINT(const char* s, int color)
+void show_actions()
 {
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY | color);
-    printf(s);
-    SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY | 7);
+    printf("\nSelect a direction (N, S, E, W).");
+    printf("\nCancel the previous move (B).");
+    printf("\nErase the chain (R).");
+    printf("\nRestart the level (X).");
+    printf("\nSelect another chain (C)");
+    printf("\nExit the game (Q)\n\n");
+}
+
+bool do_action(char action)
+{
+    bool quit = false;
+    switch (action) {
+    case 'N':
+        printf("\nVous avez pris la direction du Nord\n");
+        break;
+    case 'E':
+        printf("\nVous avez pris la direction de l'Est\n");
+        break;
+    case 'W':
+        printf("\nVous avez pris la direction de l'Ouest\n");
+        break;
+    case 'S':
+        printf("\nVous avez pris la direction du Sud\n");
+        break;
+    case 'B':
+        printf("\nVous avez annule votre precedent mouvement\n");
+        break;
+    case 'R':
+        printf("\nVous avez efface la chaine\n");
+        break;
+    case 'X':
+        printf("\nVous avez recommence le niveau\n");
+        break;
+    case 'C':
+        printf("\nVous avez selectionne une autre chaîne\n");
+        break;
+    case 'Q':
+        printf("\nVous avez quitte la partie\n");
+        quit = true;
+        break;
+    default:
+        printf("\nVous n'avez pas choisi de lettre valide\n");
+        break;
+    }
+    return quit;
 }
