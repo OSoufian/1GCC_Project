@@ -5,20 +5,19 @@
 typedef struct {
     int value;
     int color;
-    int row;
-    int column;
+    int index;
 } Cell;
 
 typedef struct {
     int rows;
     int columns;
-    Cell *content;
+    Cell content[10][10];
 } Board;
 
+Cell create_cell(int value, int color, int index);
 Board create_board();
-Cell create_cell(int value, int color, int row, int column);
 
-void show_board(Board board);
 void show_cell(Cell cell);
+void show_board(Board board);
 
 #endif
