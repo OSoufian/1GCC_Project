@@ -8,7 +8,7 @@
 
 char get_action();
 void show_actions();
-bool do_action(char action);
+bool do_action(Board board, char action);
 
 int main()
 {
@@ -21,7 +21,7 @@ int main()
         show_actions();
         action = get_action();
         system("cls");
-    } while (!do_action(action));
+    } while (!do_action(board, action));
 
     return 0;
 }
@@ -48,7 +48,7 @@ void show_actions()
     printf("\nExit the game (Q)\n\n");
 }
 
-bool do_action(char action)
+bool do_action(Board board, char action)
 {
     bool quit = false;
     switch (action) {
@@ -73,9 +73,7 @@ bool do_action(char action)
     case 'X':
         printf("\nVous avez recommence le niveau\n");
         break;
-    case 'C':
-        printf("\nVous avez selectionne une autre chaîne\n");
-        break;
+    case 'C': select_chain(board); break;
     case 'Q':
         printf("\nVous avez quitte la partie\n");
         quit = true;
