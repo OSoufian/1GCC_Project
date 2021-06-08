@@ -8,7 +8,8 @@
 
 char get_action();
 void show_actions();
-bool do_action(Board board, char action);
+bool do_action(Board *board, char action);
+
 
 int main()
 {
@@ -21,7 +22,7 @@ int main()
         show_actions();
         action = get_action();
         system("cls");
-    } while (!do_action(board, action));
+    } while (!do_action(&board, action));
 
     return 0;
 }
@@ -48,12 +49,12 @@ void show_actions()
     printf("\nExit the game (Q)\n\n");
 }
 
-bool do_action(Board board, char action)
+bool do_action(Board *board, char action)
 {
     bool quit = false;
     switch (action) {
     case 'N':
-        printf("\nVous avez pris la direction du Nord\n");
+        move(board);
         break;
     case 'E':
         printf("\nVous avez pris la direction de l'Est\n");
