@@ -4,6 +4,10 @@
 
 #include "board.h"
 
+
+void fill_color(Board* board);
+void move(Board* board);
+
 //Création des cellules
 Cell create_cell(int value, int color, int index)
 {
@@ -17,13 +21,23 @@ Board create_board()
     Cell start = create_cell(0, 4, 0);
     start.active = true;
 
-    Board board = { .columns = 3, .rows = 3, .content = malloc(board.columns * board.rows * sizeof(Cell))};  
+    Board board = { .columns = 3, .rows = 3, .x = 2, .content = malloc(board.columns * board.rows * sizeof(Cell))};
+
+    fill_color(&board);
 
     board.content[0][0] = create_cell(1, 0, 0);  board.content[0][1] = create_cell(1, 0, 0); board.content[0][2] = create_cell(1, 0, 0);
     board.content[1][0] = create_cell(1, 0, 0);  board.content[1][1] = create_cell(2, 0, 0); board.content[1][2] = create_cell(2, 0, 0);
     board.content[2][0] = start;  board.content[2][1] = create_cell(3, 0, 0); board.content[2][2] = create_cell(0, 2, 0);
 
     return board;
+}
+
+void fill_color(Board *board) {
+    int colors[5] = {4, 2, 1, 5, 6};
+    int board_x = board->x;
+    for (int x = 0; x < board_x; x++) {
+        board->colors[x] = colors[x];
+    }
 }
 
 //Afficher une cellule
@@ -50,7 +64,7 @@ void show_board(Board board) {
 
 void select_chain(Board *board) {
     Cell cell = get_active_cell(*board);
-    int next_color = get_next_color(cell.color);
+    int next_color = get_next_color(*board, cell.color);
     Cell new_cell;
     for (int row = 0; row < board->rows; row++) {
         for (int column = 0; column < board->columns; column++) {
@@ -68,13 +82,12 @@ const blue = 1;
 const pink = 5;
 const yellow = 6;
 
-int get_next_color(int color) {
-    int colors[5] = { 4, 2, 1, 5, 6 };
+int get_next_color(Board board, int color) {
 
     for (int i = 0; i < 5; i++) {
-        if (colors[i] == color) {
-            if (i == 4) return colors[0];
-            return colors[i + 1];
+        if (board.colors[i] == color) {
+            if (i == board.x - 1) return board.colors[0];
+            return board.colors[i + 1];
         }
     }
 }
@@ -110,3 +123,24 @@ void print_selected_cell(char* s, int front_color, int back_color)
     printf(s);
     SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY | 7);
 }
+
+void move(Board* board) {
+    Cell cell = get_active_cell(*board);
+    Cell new_cell;
+    for (int row = 0; row < board->rows; row++) {
+        for (int column = 0; column < board->columns; column++) {
+            if (board->content[row][column] == board->content[cell.row - 1][cell.column]) {
+                board->content[row][column].selected = true;
+                board->content[row][column].active = true;
+                board->content[cell.row][cell.column].active = false;
+                board->content[row][column].index = board->content[cell.row][cell.column].index + 1 ;
+
+            }
+        }
+    }
+}
+
+
+
+
+//board[i][j].color = board[i-1][j].color
