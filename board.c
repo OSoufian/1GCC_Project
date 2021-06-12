@@ -3,97 +3,88 @@
 #include <windows.h>
 
 #include "board.h"
-
-
-void fill_color(Board* board);
-void move(Board* board);
+#include "levels.h"
 
 //Création des cellules
 Cell create_cell(int value, int color, int index)
 {
-    Cell cell = { .value = value, .color = color , .index = index, .active = false};
+    Cell cell = { .value = value, .color = color , .index = index, .active = false };
     return cell;
 }
 
 //Créer la grille
-Board create_board()
+Board create_board(int level)
 {
-    Cell start = create_cell(0, 4, 0);
-    start.active = true;
-
-    Board board = { .columns = 3, .rows = 3, .x = 2, .content = malloc(board.columns * board.rows * sizeof(Cell))};
-
-    fill_color(&board);
-
-    board.content[0][0] = create_cell(1, 0, 0);  board.content[0][1] = create_cell(1, 0, 0); board.content[0][2] = create_cell(1, 0, 0);
-    board.content[1][0] = create_cell(1, 0, 0);  board.content[1][1] = create_cell(2, 0, 0); board.content[1][2] = create_cell(2, 0, 0);
-    board.content[2][0] = start;  board.content[2][1] = create_cell(3, 0, 0); board.content[2][2] = create_cell(0, 2, 0);
+    Board board;
+    switch (level)
+    {
+    case 1: {board = create_board_level_01(); break; }
+    }
 
     return board;
 }
 
-void fill_color(Board *board) {
-    int colors[5] = {4, 2, 1, 5, 6};
-    int board_x = board->x;
-    for (int x = 0; x < board_x; x++) {
-        board->colors[x] = colors[x];
-    }
-}
+//Affichage de la grille
+void print_board(Board board)
+{
+    printf("-- Cardinal Chains --\n\n");
 
-//Afficher une cellule
-void show_cell(Cell cell) {
-
-    char c[] = "X";
-    if (cell.value != 0) _itoa(cell.value, c, 10);
-    if (cell.active == true) print_selected_cell(c, cell.color, 7);
-    else print_color(c, cell.color);
-
-}
-
-//Afficher la grille
-void show_board(Board board) {
-
-    for (int row = 0; row < board.rows; row++) {
-        for (int column = 0; column < board.columns; column++) {
-            show_cell(board.content[row][column]);
+    for (int row = 0; row < board.rows; row++)
+    {
+        printf("\t");
+        for (int column = 0; column < board.columns; column++)
+        {
+            print_cell(board.content[row][column]);
         }
         printf("\n");
     }
-
 }
 
-void select_chain(Board *board) {
+//Changer la chaîne en cours
+void select_chain(Board* board)
+{
+    if (board->chains == 1) return;
+
     Cell cell = get_active_cell(*board);
     int next_color = get_next_color(*board, cell.color);
-    Cell new_cell;
-    for (int row = 0; row < board->rows; row++) {
-        for (int column = 0; column < board->columns; column++) {
-            if (board->content[row][column].color == next_color) {
-                board->content[cell.row][cell.column].active = false;
-                board->content[row][column].active = true;
+
+    int index = -1;
+    Cell new_cell = { .row = 0,.column = 0 };
+
+    for (int row = 0; row < board->rows; row++)
+    {
+        for (int column = 0; column < board->columns; column++)
+        {
+            if (board->content[row][column].color == next_color)
+            {
+                if (board->content[row][column].index > index)
+                {
+                    index = board->content[row][column].index;
+                    new_cell.row = row;
+                    new_cell.column = column;
+                }
             }
         }
     }
+
+    board->content[cell.row][cell.column].active = false;
+    board->content[new_cell.row][new_cell.column].active = true;
 }
 
-const red = 4;
-const green = 2;
-const blue = 1;
-const pink = 5;
-const yellow = 6;
-
+//Savoir la prochaine couleur pour pouvoir changer de chaîne
 int get_next_color(Board board, int color) {
+    int colors[5] = { 4, 2, 1, 5, 6 };
 
-    for (int i = 0; i < 5; i++) {
-        if (board.colors[i] == color) {
-            if (i == board.x - 1) return board.colors[0];
-            return board.colors[i + 1];
+    for (int i = 0; i < board.chains; i++) {
+        if (colors[i] == color) {
+            if (i == board.chains - 1) return colors[0];
+            return colors[i + 1];
         }
     }
 }
 
-Cell get_active_cell(Board board)
-{
+//Obtenir la cellule active où est placé le curseur
+Cell get_active_cell(Board board) {
     Cell cell;
     for (int row = 0; row < board.rows; row++) {
         for (int column = 0; column < board.columns; column++) {
@@ -107,40 +98,144 @@ Cell get_active_cell(Board board)
     }
 }
 
-
-void print_color(char* s, int color)
+//Affichage des cellules
+void print_cell(Cell cell)
 {
-    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(console, FOREGROUND_INTENSITY | color);
-    printf(s);
-    SetConsoleTextAttribute(console, FOREGROUND_INTENSITY | 7);
-}
+    char c[] = "X";
+    if (cell.value == -1) c[0] = ' ';
+    else if (cell.value != 0) _itoa(cell.value, c, 10);
 
-void print_selected_cell(char* s, int front_color, int back_color)
-{
     HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(handle, BACKGROUND_INTENSITY | back_color * 16 | FOREGROUND_INTENSITY | front_color);
-    printf(s);
-    SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY | 7);
+    short attribute = FOREGROUND_INTENSITY | 7;
+    short attribute2 = FOREGROUND_INTENSITY | cell.color;
+    if (cell.active == true) attribute2 = attribute2 | 7 * 16 | BACKGROUND_INTENSITY;
+
+    SetConsoleTextAttribute(handle, attribute2);
+    printf(c);
+    SetConsoleTextAttribute(handle, attribute);
 }
 
-void move(Board* board) {
+//Effectue le déplacement et donc adapte l'état de la grille, si le déplacement est possible
+bool move(Board* board, char direction)
+{
     Cell cell = get_active_cell(*board);
-    Cell new_cell;
-    for (int row = 0; row < board->rows; row++) {
-        for (int column = 0; column < board->columns; column++) {
-            if (board->content[row][column] == board->content[cell.row - 1][cell.column]) {
-                board->content[row][column].selected = true;
-                board->content[row][column].active = true;
-                board->content[cell.row][cell.column].active = false;
-                board->content[row][column].index = board->content[cell.row][cell.column].index + 1 ;
+    Position position = can_move(*board, cell, direction);
 
+    if (position.valid)
+    {
+        board->content[cell.row][cell.column].active = false;
+        board->content[position.row][position.column].active = true;
+        board->content[position.row][position.column].index = cell.index + 1;
+        board->content[position.row][position.column].color = cell.color;
+    }
+
+    return position.valid;
+}
+
+//Vérifie que le déplacement est possible, et retourne la cellule de destination
+Position can_move(Board board, Cell cell, char direction)
+{
+    int row = cell.row;
+    int column = cell.column;
+    Position position = { .valid = false };
+
+    switch (direction)
+    {
+    case 'N': { row--; break; }
+    case 'S': { row++; break; }
+    case 'E': { column++; break; }
+    case 'W': { column--; break; }
+    }
+
+    if (row < 0 || row>board.rows - 1 || column < 0 || column >board.columns - 1)
+        return position;
+
+    Cell new_cell = board.content[row][column];
+
+    if (new_cell.value < cell.value || new_cell.value == 0 || new_cell.color != 0)
+        return position;
+
+    position.row = row;
+    position.column = column;
+    position.valid = true;
+
+    return position;
+
+}
+
+//Détermine si la partie est finie en vérifiant s'il y a encore un pion sans couleur
+bool is_end_game(Board board)
+{
+    int color = 0;
+    int value = 0;
+    for (int row = 0; row < board.rows; row++)
+    {
+        for (int column = 0; column < board.columns; column++)
+        {
+            color = board.content[row][column].color;
+            value = board.content[row][column].value;
+
+            if (color == 0 && value != -1) return false;
+        }
+    }
+    return true;
+}
+
+//Permet d'annuler un mouvement en remontant la chaîne d'une cellules
+void remove_move(Board* board)
+{
+    Cell cell = get_active_cell(*board);
+    if (cell.index > 1)
+    {
+        for (int row = 0; row < board->rows; row++)
+        {
+            for (int column = 0; column < board->columns; column++)
+            {
+                if (board->content[row][column].index == cell.index - 1)
+                {
+                    board->content[cell.row][cell.column].active = false;
+                    board->content[cell.row][cell.column].index = 0;
+                    board->content[cell.row][cell.column].color = 0;
+                    board->content[row][column].active = true;
+                    return;
+                }
             }
         }
     }
 }
 
+//Permet d'annuler un mouvement en remontant la chaîne d'une cellule
+void erase_chain(Board* board)
+{
+    Cell cell = get_active_cell(*board);
 
+    if (cell.index > 1)
+    {
+        for (int row = 0; row < board->rows; row++)
+        {
+            for (int column = 0; column < board->columns; column++)
+            {
+                if (board->content[row][column].color == cell.color)
+                {
+                    if (board->content[row][column].index > 1)
+                    {
+                        board->content[row][column].color = 0;
+                        board->content[row][column].index = 0;
+                        board->content[row][column].active = false;
+                    }
+                    else
+                    {
+                        board->content[row][column].active = true;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
 
-
-//board[i][j].color = board[i-1][j].color
+//Recréer la grille pour recommencer la partie
+void restart(Board* board, int level)
+{
+    *board = create_board(level);
+}
