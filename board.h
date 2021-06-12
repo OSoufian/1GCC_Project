@@ -16,20 +16,39 @@ typedef struct {
 typedef struct {
     int rows;
     int columns;
-    int colors[5];
-    int x;
+    int chains;
     Cell content[10][10];
 } Board;
 
-Cell create_cell(int value, int color, int index);
-Board create_board();
+typedef struct {
+    int row;
+    int column;
+    bool valid;
+} Position;
 
-void show_cell(Cell cell);
-void show_board(Board board);
-void print_color(const char* s, int color);
-void print_selected_cell(const char* s, int front_color, int back_color);
+typedef struct {
+    bool valid;
+    char content;
+    int value;
+}Action;
+
+
+Cell create_cell(int value, int color, int index);
+Board create_board(int level);
+
+void print_board(Board board);
+void print_cell(Cell cell);
 void select_chain(Board *board);
-int get_next_color(Board board, int color);
+
+int get_next_color(Board board,int color);
 Cell get_active_cell(Board board);
+
+bool move(Board *board, char action);
+Position can_move(Board board, Cell cell, char action);
+bool is_end_game(Board board);
+
+void remove_move(Board *board);
+void erase_chain(Board *board);
+void restart(Board* board , int level);
 
 #endif
