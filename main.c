@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <stdbool.h>
 
+
 #include "board.h"
 #include "utils.h"
 
@@ -105,8 +106,7 @@ Action get_action(char *chars)
     if (read(input, 4)) { //Vérifie qu'il y ait bien une valeur dans l'input
         result = is_numeric(input);
 
-        //Si l'input est un nombre
-        if (!result.error) {
+        //Si l'input est un nombre        if (!result.error) {
             if (result.value >= 1 && result.value <= 30) {
                 action.valid = true;
                 action.value = result.value;
@@ -170,4 +170,9 @@ bool do_action(Board *board, Action action , int level)
 
     }
     return end;
+}
+
+int main()
+{
+    return 0;
 }
