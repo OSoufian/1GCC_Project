@@ -8,7 +8,7 @@
 //Création des cellules
 Cell create_cell(int value, int color, int index)
 {
-    Cell cell = { .value = value, .color = color , .index = index, .active = false };
+    Cell cell = {.value = value, .color = color , .index = index, .active = false};
     return cell;
 }
 
@@ -18,7 +18,16 @@ Board create_board(int level)
     Board board;
     switch (level)
     {
-    case 1: {board = create_board_level_01(); break; }
+    case 1: board = create_board_level_01(); break;
+    case 2: board = create_board_level_02(); break;
+    case 3: board = create_board_level_03(); break;
+    case 4: board = create_board_level_04(); break;
+    case 5: board = create_board_level_05(); break;
+    case 6: board = create_board_level_06(); break;
+    case 7: board = create_board_level_07(); break;
+    case 8: board = create_board_level_08(); break;
+    case 9: board = create_board_level_09(); break;
+    case 10: board = create_board_level_10(); break;
     }
 
     return board;
@@ -28,12 +37,9 @@ Board create_board(int level)
 void print_board(Board board)
 {
     printf("-- Cardinal Chains --\n\n");
-
-    for (int row = 0; row < board.rows; row++)
-    {
+    for (int row = 0; row < board.rows; row++) {
         printf("\t");
-        for (int column = 0; column < board.columns; column++)
-        {
+        for (int column = 0; column < board.columns; column++) {
             print_cell(board.content[row][column]);
         }
         printf("\n");
@@ -49,16 +55,12 @@ void select_chain(Board* board)
     int next_color = get_next_color(*board, cell.color);
 
     int index = -1;
-    Cell new_cell = { .row = 0,.column = 0 };
+    Cell new_cell = {.row = 0, .column = 0};
 
-    for (int row = 0; row < board->rows; row++)
-    {
-        for (int column = 0; column < board->columns; column++)
-        {
-            if (board->content[row][column].color == next_color)
-            {
-                if (board->content[row][column].index > index)
-                {
+    for (int row = 0; row < board->rows; row++) {
+        for (int column = 0; column < board->columns; column++) {
+            if (board->content[row][column].color == next_color) {
+                if (board->content[row][column].index > index) {
                     index = board->content[row][column].index;
                     new_cell.row = row;
                     new_cell.column = column;
@@ -66,14 +68,13 @@ void select_chain(Board* board)
             }
         }
     }
-
     board->content[cell.row][cell.column].active = false;
     board->content[new_cell.row][new_cell.column].active = true;
 }
 
 //Savoir la prochaine couleur pour pouvoir changer de chaîne
 int get_next_color(Board board, int color) {
-    int colors[5] = { 4, 2, 1, 5, 6 };
+    int colors[5] = {4, 2, 1, 5, 6};
 
     for (int i = 0; i < board.chains; i++) {
         if (colors[i] == color) {
@@ -121,8 +122,7 @@ bool move(Board* board, char direction)
     Cell cell = get_active_cell(*board);
     Position position = can_move(*board, cell, direction);
 
-    if (position.valid)
-    {
+    if (position.valid) {
         board->content[cell.row][cell.column].active = false;
         board->content[position.row][position.column].active = true;
         board->content[position.row][position.column].index = cell.index + 1;
@@ -137,17 +137,15 @@ Position can_move(Board board, Cell cell, char direction)
 {
     int row = cell.row;
     int column = cell.column;
-    Position position = { .valid = false };
+    Position position = {.valid = false};
 
-    switch (direction)
-    {
-    case 'N': { row--; break; }
-    case 'S': { row++; break; }
-    case 'E': { column++; break; }
-    case 'W': { column--; break; }
+    switch (direction) {
+    case 'N': row--; break;
+    case 'S': row++; break;
+    case 'E': column++; break;
+    case 'W': column--; break;
     }
-
-    if (row < 0 || row>board.rows - 1 || column < 0 || column >board.columns - 1)
+    if (row < 0 || row > board.rows - 1 || column < 0 || column > board.columns - 1)
         return position;
 
     Cell new_cell = board.content[row][column];
@@ -168,10 +166,8 @@ bool is_end_game(Board board)
 {
     int color = 0;
     int value = 0;
-    for (int row = 0; row < board.rows; row++)
-    {
-        for (int column = 0; column < board.columns; column++)
-        {
+    for (int row = 0; row < board.rows; row++) {
+        for (int column = 0; column < board.columns; column++) {
             color = board.content[row][column].color;
             value = board.content[row][column].value;
 
@@ -185,14 +181,10 @@ bool is_end_game(Board board)
 void remove_move(Board* board)
 {
     Cell cell = get_active_cell(*board);
-    if (cell.index > 1)
-    {
-        for (int row = 0; row < board->rows; row++)
-        {
-            for (int column = 0; column < board->columns; column++)
-            {
-                if (board->content[row][column].index == cell.index - 1)
-                {
+    if (cell.index > 1) {
+        for (int row = 0; row < board->rows; row++) {
+            for (int column = 0; column < board->columns; column++) {
+                if (board->content[row][column].index == cell.index - 1) {
                     board->content[cell.row][cell.column].active = false;
                     board->content[cell.row][cell.column].index = 0;
                     board->content[cell.row][cell.column].color = 0;
@@ -209,22 +201,16 @@ void erase_chain(Board* board)
 {
     Cell cell = get_active_cell(*board);
 
-    if (cell.index > 1)
-    {
-        for (int row = 0; row < board->rows; row++)
-        {
-            for (int column = 0; column < board->columns; column++)
-            {
-                if (board->content[row][column].color == cell.color)
-                {
-                    if (board->content[row][column].index > 1)
-                    {
+    if (cell.index > 1) {
+        for (int row = 0; row < board->rows; row++) {
+            for (int column = 0; column < board->columns; column++) {
+                if (board->content[row][column].color == cell.color) {
+                    if (board->content[row][column].index > 1) {
                         board->content[row][column].color = 0;
                         board->content[row][column].index = 0;
                         board->content[row][column].active = false;
                     }
-                    else
-                    {
+                    else {
                         board->content[row][column].active = true;
                         return;
                     }
