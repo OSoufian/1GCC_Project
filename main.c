@@ -5,16 +5,15 @@
 #include <windows.h>
 #include <stdbool.h>
 
-
 #include "board.h"
 #include "utils.h"
 
-Action get_action(char *chars);
+Action get_action(char* chars);
 Action get_level();
 Action get_progress_actions();
 Action get_end_actions();
 
-bool do_action(Board *board, Action action , int level);
+bool do_action(Board* board, Action action, int level);
 
 int main()
 {
@@ -44,6 +43,8 @@ int main()
             action = get_progress_actions();
 
             if (!action.valid);//beep error
+            else if (action.content == 'Q') return 0;
+            else if (action.content == 'L') break;
             else if (do_action(&board, action, level)) {
                 //Fin de partie
                 do {
@@ -53,7 +54,7 @@ int main()
                 } while (!action.valid);
 
                 if (action.content == 'Q') return 0;
-            
+
                 end_game = true;
                 break;
             }
@@ -80,15 +81,15 @@ Action get_progress_actions()
     printf("\nErase the chain [R]");
     printf("\nRestart the level [X]");
     printf("\nSelect another chain [C]");
+    printf("\nSelect another level [L]");
     printf("\nExit the game [Q]");
     printf("\n\n>");
-    return get_action("NSEWBRXCQ");
+    return get_action("NSEWBRXCLQ");
 }
 
 //Affichage des actions, une fois la partie finie
 Action get_end_actions()
 {
- 
     printf("\n\nThe game is won");
     printf("\n\nPlay new game [G]");
     printf("\nExit the game [Q]");
@@ -97,16 +98,17 @@ Action get_end_actions()
 }
 
 //Obtenir l'action rentrée par l'utilisateur
-Action get_action(char *chars)
-{   
+Action get_action(char* chars)
+{
     char input[4];
-    Action action = {.valid=false};
+    Action action = {.valid = false};
     Result result;
-    
+
     if (read(input, 4)) { //Vérifie qu'il y ait bien une valeur dans l'input
         result = is_numeric(input);
 
-        //Si l'input est un nombre        if (!result.error) {
+        //Si l'input est un nombre
+        if (!result.error) {
             if (result.value >= 1 && result.value <= 30) {
                 action.valid = true;
                 action.value = result.value;
@@ -124,55 +126,36 @@ Action get_action(char *chars)
             }
         }
     }
-    
+
     return action;
 }
 
 //Exécute les diverses fonctions selon le caractère entré par l'utilisateur
-bool do_action(Board *board, Action action , int level)
-{    
+bool do_action(Board* board, Action action, int level)
+{
     bool end = false;
-    switch (action.content) 
-    {
-        case 'N':
-        case 'E':
-        case 'W':
-        case 'S':
-        {
-            if (move(board, action.content))
-            {
-                if (is_end_game(*board))
-                    end = true;
-            }
-            break;
+    switch (action.content) {
+    case 'N':
+    case 'E':
+    case 'W':
+    case 'S':
+        if (move(board, action.content)) {
+            if (is_end_game(*board))
+                end = true;
         }
-        case 'B':
-        {
-            remove_move(board);
-            break;
-        }
-        case 'R':
-        {
-            erase_chain(board);
-            break;
-        }
-        case 'X':
-        {
-            restart(board, level);
-            break;
-        }
-        case 'C': 
-        {
-            select_chain(board);
-            break;
-        }
-     
-
+        break;
+    case 'B':
+        remove_move(board);
+        break;
+    case 'R':
+        erase_chain(board);
+        break;
+    case 'X':
+        restart(board, level);
+        break;
+    case 'C':
+        select_chain(board);
+        break;
     }
     return end;
-}
-
-int main()
-{
-    return 0;
 }
