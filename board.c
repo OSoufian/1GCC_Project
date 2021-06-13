@@ -28,6 +28,26 @@ Board create_board(int level)
     case 8: board = create_board_level_08(); break;
     case 9: board = create_board_level_09(); break;
     case 10: board = create_board_level_10(); break;
+    case 11: board = create_board_level_11(); break;
+    case 12: board = create_board_level_12(); break;
+    case 13: board = create_board_level_13(); break;
+    case 14: board = create_board_level_14(); break;
+    case 15: board = create_board_level_15(); break;
+    case 16: board = create_board_level_16(); break;
+    case 17: board = create_board_level_17(); break;
+    case 18: board = create_board_level_18(); break;
+    case 19: board = create_board_level_19(); break;
+    case 20: board = create_board_level_20(); break;
+    case 21: board = create_board_level_21(); break;
+    case 22: board = create_board_level_22(); break;
+    case 23: board = create_board_level_23(); break;
+    case 24: board = create_board_level_24(); break;
+    case 25: board = create_board_level_25(); break;
+    case 26: board = create_board_level_26(); break;
+    case 27: board = create_board_level_27(); break;
+    case 28: board = create_board_level_28(); break;
+    case 29: board = create_board_level_29(); break;
+    case 30: board = create_board_level_30(); break;
     }
 
     return board;
@@ -107,13 +127,13 @@ void print_cell(Cell cell)
     else if (cell.value != 0) _itoa(cell.value, c, 10);
 
     HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    short attribute = FOREGROUND_INTENSITY | 7;
-    short attribute2 = FOREGROUND_INTENSITY | cell.color;
-    if (cell.active == true) attribute2 = attribute2 | 7 * 16 | BACKGROUND_INTENSITY;
+    short default_attribute = FOREGROUND_INTENSITY | 7;
+    short cell_attribute = FOREGROUND_INTENSITY | cell.color;
+    if (cell.active == true) cell_attribute = cell_attribute | 7 * 16 | BACKGROUND_INTENSITY;
 
-    SetConsoleTextAttribute(handle, attribute2);
+    SetConsoleTextAttribute(handle, cell_attribute);
     printf(c);
-    SetConsoleTextAttribute(handle, attribute);
+    SetConsoleTextAttribute(handle, default_attribute); //On remet les couleurs d'affichage par défaut après avoir affiché la cellule
 }
 
 //Effectue le déplacement et donc adapte l'état de la grille, si le déplacement est possible
