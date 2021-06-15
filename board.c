@@ -66,6 +66,23 @@ void print_board(Board board)
     }
 }
 
+//Affichage des cellules
+void print_cell(Cell cell)
+{
+    char c[] = "X";
+    if (cell.value == -1) c[0] = ' ';
+    else if (cell.value != 0) _itoa(cell.value, c, 10);
+
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    short default_attribute = FOREGROUND_INTENSITY | 7;
+    short cell_attribute = FOREGROUND_INTENSITY | cell.color;
+    if (cell.active == true) cell_attribute = cell_attribute | 7 * 16 | BACKGROUND_INTENSITY;
+
+    SetConsoleTextAttribute(handle, cell_attribute);
+    printf(c);
+    SetConsoleTextAttribute(handle, default_attribute); //On remet les couleurs d'affichage par défaut après avoir affiché la cellule
+}
+
 //Changer la chaîne en cours
 void select_chain(Board* board)
 {
@@ -92,18 +109,6 @@ void select_chain(Board* board)
     board->content[new_cell.row][new_cell.column].active = true;
 }
 
-//Savoir la prochaine couleur pour pouvoir changer de chaîne
-int get_next_color(Board board, int color) {
-    int colors[5] = {4, 2, 1, 5, 6};
-
-    for (int i = 0; i < board.chains; i++) {
-        if (colors[i] == color) {
-            if (i == board.chains - 1) return colors[0];
-            return colors[i + 1];
-        }
-    }
-}
-
 //Obtenir la cellule active où est placé le curseur
 Cell get_active_cell(Board board) {
     Cell cell;
@@ -119,22 +124,19 @@ Cell get_active_cell(Board board) {
     }
 }
 
-//Affichage des cellules
-void print_cell(Cell cell)
-{
-    char c[] = "X";
-    if (cell.value == -1) c[0] = ' ';
-    else if (cell.value != 0) _itoa(cell.value, c, 10);
+//Savoir la prochaine couleur pour pouvoir changer de chaîne
+int get_next_color(Board board, int color) {
+    int colors[5] = {4, 2, 1, 5, 6};
 
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    short default_attribute = FOREGROUND_INTENSITY | 7;
-    short cell_attribute = FOREGROUND_INTENSITY | cell.color;
-    if (cell.active == true) cell_attribute = cell_attribute | 7 * 16 | BACKGROUND_INTENSITY;
-
-    SetConsoleTextAttribute(handle, cell_attribute);
-    printf(c);
-    SetConsoleTextAttribute(handle, default_attribute); //On remet les couleurs d'affichage par défaut après avoir affiché la cellule
+    for (int i = 0; i < board.chains; i++) {
+        if (colors[i] == color) {
+            if (i == board.chains - 1) return colors[0];
+            return colors[i + 1];
+        }
+    }
 }
+
+
 
 //Effectue le déplacement et donc adapte l'état de la grille, si le déplacement est possible
 bool move(Board* board, char direction)
@@ -232,12 +234,12 @@ void erase_chain(Board* board)
                     }
                     else {
                         board->content[row][column].active = true;
-                        return;
                     }
                 }
             }
         }
     }
+    
 }
 
 //Recréer la grille pour recommencer la partie
