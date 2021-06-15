@@ -30,7 +30,7 @@ typedef struct {
     bool valid;
     char content;
     int value;
-}Action;
+} Action;
 
 
 Cell create_cell(int value, int color, int index);
@@ -38,17 +38,17 @@ Board create_board(int level);
 
 void print_board(Board board);
 void print_cell(Cell cell);
-void select_chain(Board *board);
+void select_chain(Board* board);
 
-int get_next_color(Board board,int color);
+int get_next_color(Board board, int color);
 Cell get_active_cell(Board board);
 
-bool move(Board *board, char action);
+bool move(Board* board, char action);
 Position can_move(Board board, Cell cell, char action);
 bool is_end_game(Board board);
 
-void remove_move(Board *board);
-void erase_chain(Board *board);
-void restart(Board* board , int level);
+void remove_move(Board* board);
+void erase_chain(Board* board);
+void restart(Board* board, int level);
 
 #endif
