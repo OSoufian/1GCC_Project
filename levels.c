@@ -468,7 +468,7 @@ Board create_board_level_30()
     Board board = {.columns = 4, .rows = 4};
     board.chains = 2;
 
-    board.content[0][0] = create_cell(2, 2, 1);  board.content[0][1] = create_cell(2, 0, 0);  board.content[0][2] = create_cell(3, 0, 0); board.content[0][3] = create_cell(3, 0, 0);
+    board.content[0][0] = create_cell(2, 0, 0);  board.content[0][1] = create_cell(2, 0, 0);  board.content[0][2] = create_cell(3, 0, 0); board.content[0][3] = create_cell(3, 0, 0);
     board.content[1][0] = create_cell(1, 0, 0);  board.content[1][1] = create_cell(2, 0, 0);  board.content[1][2] = create_cell(2, 0, 0);  board.content[1][3] = create_cell(0, 2, 1);
     board.content[2][0] = create_cell(1, 0, 0);  board.content[2][1] = start;                 board.content[2][2] = create_cell(2, 0, 0);  board.content[2][3] = create_cell(1, 0, 0);
     board.content[3][0] = create_cell(1, 0, 0);  board.content[3][1] = create_cell(1, 0, 0);  board.content[3][2] = create_cell(3, 0, 0);  board.content[3][3] = create_cell(3, 0, 0);
