@@ -5,37 +5,38 @@
 
 #include "utils.h"
 
-//Vérifie si l'input entré par l'utilisateur est un nombre ou pas
+//VÃ©rifie si l'input entrÃ© par l'utilisateur est un nombre ou pas
 Result is_numeric(const char* s)
 {
-    Result result = { .error = true };
+    Result result = {.error = true};
 
     if (s == NULL || *s == '\0' || isspace(*s))
         return result;
+
     char* p;
     result.value = (int)strtod(s, &p);
     result.error = (*p != '\0');
     return result;
 }
 
-//Vide le buffer afin d'éviter que le retour à la ligne y soit stocké
+//Vide le buffer afin d'Ã©viter que le retour Ã  la ligne y soit stockÃ©
 void clear_buffer()
 {
     int c = 0;
     while (c != '\n' && c != EOF) c = getchar();
 }
 
-//Analyse ce qu'a entré l'utilisateur
+//Analyse ce qu'a entrÃ© l'utilisateur
 bool read(char* s, int lenght)
 {
     char* start = NULL;
 
     if (fgets(s, lenght, stdin) != NULL) {
         start = strchr(s, '\n');
-        if (start != NULL)  *start = '\0'; //Si l'utilisateur a entré une commande de la bonne taille cela supprime le retour à la ligne
-        else clear_buffer(); //Sinon on récupére les premiers caractères et on clear le buffer pour pas stocker le reste
+        if (start != NULL)  *start = '\0'; //Si l'utilisateur a entrÃ© une commande de la bonne taille cela supprime le retour Ã  la ligne
+        else clear_buffer(); //Sinon on rÃ©cupÃ©re les premiers caractÃ¨res et on clear le buffer pour pas stocker le reste
         return true;
-        //Si aucun input a été récupéré 
+        //Si aucun input a Ã©tÃ© rÃ©cupÃ©rÃ© 
     }
     else {
         clear_buffer();
