@@ -20,14 +20,14 @@ int main()
     int level;
     Action action;
     Board board;
-    bool end_game = false;
+    bool end_game;
 
     do {
+        end_game = false;
         //Choix du niveau
         do {
             system("cls");
             action = get_level();
-            if (!action.valid); //beep error
         } while (!action.valid);
 
         if (action.content == 'Q') return 0;
@@ -41,9 +41,7 @@ int main()
             system("cls");
             print_board(board);
             action = get_progress_actions();
-
-            if (!action.valid);//beep error
-            else if (action.content == 'Q') return 0;
+            if (action.content == 'Q') return 0;
             else if (action.content == 'L') break;
             else if (do_action(&board, action, level)) {
                 //Fin de partie
